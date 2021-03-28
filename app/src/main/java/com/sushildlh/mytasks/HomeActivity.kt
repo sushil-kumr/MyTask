@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.FragmentManager
 import androidx.viewpager2.widget.ViewPager2
 import com.andremion.counterfab.CounterFab
@@ -19,6 +20,7 @@ import com.sushildlh.mytasks.Network.ServiceBuilder
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import kotlin.system.exitProcess
 
 class HomeActivity : TaskBaseActivity() {
 
@@ -88,7 +90,8 @@ class HomeActivity : TaskBaseActivity() {
     }
 
     private fun handleError(error: Throwable) {
-        Log.d("sam", error.toString())
+        Toast.makeText(this,"Check You Internet Connection and Restart App",Toast.LENGTH_LONG).show()
+        this.finish()
     }
 
     public fun getData(): TaskResponse {
