@@ -5,29 +5,24 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.sushildlh.mytasks.Fragments.DrinkMenuFragment
 import com.sushildlh.mytasks.Fragments.MenuFragment
-import com.sushildlh.mytasks.Fragments.SushiMenuFragement
 
 class TabPagerAdapter(
     private val fragmentManager: FragmentManager,
     private val lifecycle: Lifecycle
 ) :
     FragmentStateAdapter(fragmentManager, lifecycle) {
+    private var fragment=MenuFragment()
+
     override fun createFragment(position: Int): Fragment {
-        var fragment:Fragment? = null
-        if(position==0) {
-            fragment = MenuFragment()
-        }else if(position==1){
-            fragment = SushiMenuFragement()
-        }else{
-            fragment = DrinkMenuFragment()
-        }
         var arg: Bundle = Bundle()
         arg.putInt("position", position)
-        fragment.arguments = arg
+        fragment?.arguments = arg
+        return fragment!!
+    }
 
-        return fragment
+    public fun getFragment():MenuFragment{
+        return this.fragment
     }
 
     override fun getItemCount(): Int {

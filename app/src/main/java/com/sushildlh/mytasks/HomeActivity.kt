@@ -1,11 +1,6 @@
 package com.sushildlh.mytasks
 
-import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
-import android.os.PersistableBundle
-import android.util.Log
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
@@ -13,8 +8,8 @@ import androidx.viewpager2.widget.ViewPager2
 import com.andremion.counterfab.CounterFab
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
-import com.sushildlh.mytasks.Adapter.MyPagerAdapter
 import com.sushildlh.mytasks.Adapter.TabPagerAdapter
+import com.sushildlh.mytasks.Fragments.DiscountFragment
 import com.sushildlh.mytasks.Modal.MenuData
 import com.sushildlh.mytasks.Modal.TaskResponse
 import com.sushildlh.mytasks.Network.ServiceBuilder
@@ -27,10 +22,10 @@ class HomeActivity : AppCompatActivity() {
     var fab: CounterFab? = null
     private var myCompositeDisposable: CompositeDisposable? = null
     private var response: TaskResponse? = null
-    private var sliderPager: ViewPager2? = null
-    private var imageAdapter = MyPagerAdapter()
     private var tabPager: ViewPager2? = null
     private var tabs: TabLayout? = null
+    private var fragment:DiscountFragment?=null
+    private var menuAdapter : TabPagerAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,34 +33,25 @@ class HomeActivity : AppCompatActivity() {
 
         myCompositeDisposable = CompositeDisposable()
 
-        window?.decorView?.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
-        window.statusBarColor = Color.TRANSPARENT
-
         setSupportActionBar(findViewById(R.id.toolbar))
         supportActionBar?.hide()
-
-        sliderPager = findViewById(R.id.slider_pager)
-        var sliderTab: TabLayout = findViewById(R.id.slider_tab)
         tabPager = findViewById(R.id.viewpager)
         tabs = findViewById(R.id.tabs)
 
-        sliderPager?.adapter = imageAdapter
-
-        TabLayoutMediator(sliderTab, sliderPager!!) { tab, position ->
-        }.attach()
+        fragment = getSupportFragmentManager().findFragmentById(R.id.frag1) as DiscountFragment?
 
         fab = findViewById(R.id.fab)
 
         fab?.setOnClickListener { view ->
-            startActivity(Intent(this, CheckoutActivity::class.java))
+            Toast.makeText(this,"I need to implement Fragment for another page",Toast.LENGTH_LONG).show()
         }
 
         if(savedInstanceState==null)
             loadData()
         else{
             val fm: FragmentManager = supportFragmentManager
-            tabPager?.adapter = TabPagerAdapter(fm, lifecycle)
+            menuAdapter =  TabPagerAdapter(fm, lifecycle)
+            tabPager?.adapter = menuAdapter
             tabs?.setSelectedTabIndicator(null);
             TabLayoutMediator(tabs!!, tabPager!!) { tab, position ->
                 tab.text = "${getTabNames(position)}"
@@ -86,13 +72,17 @@ class HomeActivity : AppCompatActivity() {
         fab?.increase(); // Increase the cart item value by 1
     }
 
+    public fun updateSet(count:Int) {
+        fab?.count = count; // Increase the cart item value by 1
+    }
+
     private fun handleResponse(response: TaskResponse) {
-        Log.d("sam","Hello")
         this.response = response
-        imageAdapter.setItem(response.discountImages)
+        fragment?.setItem(response.discountImages)
 
         val fm: FragmentManager = supportFragmentManager
-        tabPager?.adapter = TabPagerAdapter(fm, lifecycle)
+        menuAdapter =  TabPagerAdapter(fm, lifecycle)
+        tabPager?.adapter = menuAdapter
         tabs?.setSelectedTabIndicator(null);
         TabLayoutMediator(tabs!!, tabPager!!) { tab, position ->
             tab.text = "${getTabNames(position)}"
@@ -100,9 +90,7 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun handleError(error: Throwable) {
-        Log.d("sam",error.toString())
-//        Toast.makeText(this,"Check You Internet Connection and Restart App",Toast.LENGTH_LONG).show()
-//        this.finish()
+        Toast.makeText(this,"Check You Internet Connection and Restart App",Toast.LENGTH_LONG).show()
     }
 
     public fun getData(): TaskResponse {
@@ -128,16 +116,6 @@ class HomeActivity : AppCompatActivity() {
             else -> return "Drink"
         }
     }
-
-//    override fun onDetachedFromWindow() {
-//        super.onDetachedFromWindow()
-//        myCompositeDisposable?.clear()
-//    }
-
-//    override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
-////        outState.putSerializable("images",this.response!!.discountImages)
-//        super.onSaveInstanceState(outState, outPersistentState)
-//    }
 
     override fun onDestroy() {
         super.onDestroy()

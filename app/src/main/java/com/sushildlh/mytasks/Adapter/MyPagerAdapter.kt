@@ -11,7 +11,7 @@ import com.sushildlh.mytasks.R
 
 class MyPagerAdapter : RecyclerView.Adapter<MyPagerAdapter.MyViewHolder>() {
 
-    private var list: List<SliderItem> = listOf()
+    private var list: List<String> = listOf()
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
@@ -19,10 +19,10 @@ class MyPagerAdapter : RecyclerView.Adapter<MyPagerAdapter.MyViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        holder.bind(list[position])
+        holder.bind(list.get(position))
     }
 
-    fun setItem(list: List<SliderItem>) {
+    fun setItem(list: List<String>) {
         this.list = list
         notifyDataSetChanged()
     }
@@ -38,12 +38,12 @@ class MyPagerAdapter : RecyclerView.Adapter<MyPagerAdapter.MyViewHolder>() {
             )
         )
 
-        fun bind(imageModel: SliderItem) {
+        fun bind(imageModel: String) {
 
             var imageView: ImageView = itemView.findViewById(R.id.image)
 
             Glide.with(itemView.context)
-                .load(imageModel.imageUrl)
+                .load(imageModel)
                 .into(imageView)
         }
     }

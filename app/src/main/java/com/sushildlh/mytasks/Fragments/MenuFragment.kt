@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -14,6 +15,7 @@ import com.sushildlh.mytasks.Adapter.MenuAdapter
 import com.sushildlh.mytasks.HomeActivity
 import com.sushildlh.mytasks.Modal.MenuData
 import com.sushildlh.mytasks.Modal.SliderItem
+import com.sushildlh.mytasks.Modal.TaskResponse
 import com.sushildlh.mytasks.R
 
 // TODO: Rename parameter arguments, choose names that match
@@ -27,11 +29,12 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 
-data class MenuState(@PersistState val menList: List<MenuData> = emptyList()) : MavericksState
+data class MenuState(@PersistState val menList: TaskResponse? = TaskResponse()) : MavericksState
 
 class MenuViewModel(state: MenuState) : MavericksViewModel<MenuState>(state) {
 
-    fun setList(menList: List<MenuData>) = setState { copy(menList = menList) }
+    fun setList(menList: TaskResponse) = setState { copy(menList = menList) }
+//    fun addCount(count: Int)= setState { copy(menList - ) }
 }
 
 class MenuFragment : Fragment(), MavericksView {
@@ -40,12 +43,17 @@ class MenuFragment : Fragment(), MavericksView {
     private var param2: String? = null
 
     private val viewModel: MenuViewModel by activityViewModel()
+    private var position: Int = 1
 
-//    private var position: Int = 0
     private var mList: RecyclerView? = null
 
     override fun invalidate() = withState(viewModel) { state ->
-        setAdapter(state.menList)
+        if (position == 0)
+            setAdapter(state.menList!!.pizzaData)
+        else if(position==1)
+            setAdapter(state.menList!!.sushiData)
+        else
+            setAdapter(state.menList!!.drinkData)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,8 +61,9 @@ class MenuFragment : Fragment(), MavericksView {
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
+            position = it.getInt("position")
         }
-//        position = arguments?.getInt("position")!!
+
     }
 
     override fun onCreateView(
@@ -69,11 +78,9 @@ class MenuFragment : Fragment(), MavericksView {
         if (activity.getMenuData(0) != null) {
             menuList = activity.getMenuData(0)!!
             if (menuList != null) {
-                viewModel.setList(menuList)
+                viewModel.setList(activity.getData())
             }
         }
-
-
 
         mList = view?.findViewById(R.id.menu_list)
 
@@ -90,6 +97,11 @@ class MenuFragment : Fragment(), MavericksView {
             )
         )
         mList?.adapter = this.context?.let { MenuAdapter(menuList, it) }
+    }
+
+    fun setCount(count:Int) {
+//        viewModel.setList()
+//        Toast.makeText(this.context,"Hi", Toast.LENGTH_LONG).show()
     }
 
     companion object {
