@@ -27,14 +27,14 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 
-data class MenuState(@PersistState val menList: List<MenuData> = emptyList()) : MavericksState
+data class SushiMenuState(@PersistState val menList: List<MenuData> = emptyList()) : MavericksState
 
-class MenuViewModel(state: MenuState) : MavericksViewModel<MenuState>(state) {
+class SushiMenuViewModel(state: SushiMenuState) : MavericksViewModel<SushiMenuState>(state) {
 
-    fun setList(menList: List<MenuData>) = setState { copy(menList = menList) }
+    fun setList(menList:List<MenuData>) = setState { copy(menList = menList) }
 }
 
-class MenuFragment : Fragment(), MavericksView {
+class SushiMenuFragement : Fragment(), MavericksView {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -42,7 +42,7 @@ class MenuFragment : Fragment(), MavericksView {
     private val viewModel: MenuViewModel by activityViewModel()
 
 //    private var position: Int = 0
-    private var mList: RecyclerView? = null
+    private var mList: RecyclerView?=null
 
     override fun invalidate() = withState(viewModel) { state ->
         setAdapter(state.menList)
@@ -66,9 +66,9 @@ class MenuFragment : Fragment(), MavericksView {
 
         val activity = this.context as HomeActivity
         var menuList: List<MenuData> = emptyList<MenuData>()
-        if (activity.getMenuData(0) != null) {
-            menuList = activity.getMenuData(0)!!
-            if (menuList != null) {
+        if (activity.getMenuData(1) != null) {
+            menuList = activity.getMenuData(1)!!
+            if(menuList!=null) {
                 viewModel.setList(menuList)
             }
         }
@@ -81,7 +81,7 @@ class MenuFragment : Fragment(), MavericksView {
         return view
     }
 
-    private fun setAdapter(menuList: List<MenuData>) {
+    private fun setAdapter(menuList:List<MenuData>){
         mList?.layoutManager = LinearLayoutManager(this.activity)
         mList?.addItemDecoration(
             DividerItemDecoration(

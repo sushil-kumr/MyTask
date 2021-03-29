@@ -3,9 +3,11 @@ package com.sushildlh.mytasks
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
 import androidx.viewpager2.widget.ViewPager2
 import com.andremion.counterfab.CounterFab
@@ -13,16 +15,14 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.sushildlh.mytasks.Adapter.MyPagerAdapter
 import com.sushildlh.mytasks.Adapter.TabPagerAdapter
-import com.sushildlh.mytasks.Core.TaskBaseActivity
 import com.sushildlh.mytasks.Modal.MenuData
 import com.sushildlh.mytasks.Modal.TaskResponse
 import com.sushildlh.mytasks.Network.ServiceBuilder
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlin.system.exitProcess
 
-class HomeActivity : TaskBaseActivity() {
+class HomeActivity : AppCompatActivity() {
 
     var fab: CounterFab? = null
     private var myCompositeDisposable: CompositeDisposable? = null
@@ -61,7 +61,16 @@ class HomeActivity : TaskBaseActivity() {
             startActivity(Intent(this, CheckoutActivity::class.java))
         }
 
-        loadData()
+        if(savedInstanceState==null)
+            loadData()
+        else{
+            val fm: FragmentManager = supportFragmentManager
+            tabPager?.adapter = TabPagerAdapter(fm, lifecycle)
+            tabs?.setSelectedTabIndicator(null);
+            TabLayoutMediator(tabs!!, tabPager!!) { tab, position ->
+                tab.text = "${getTabNames(position)}"
+            }.attach()
+        }
     }
 
     private fun loadData() {
@@ -78,6 +87,7 @@ class HomeActivity : TaskBaseActivity() {
     }
 
     private fun handleResponse(response: TaskResponse) {
+        Log.d("sam","Hello")
         this.response = response
         imageAdapter.setItem(response.discountImages)
 
@@ -90,12 +100,15 @@ class HomeActivity : TaskBaseActivity() {
     }
 
     private fun handleError(error: Throwable) {
-        Toast.makeText(this,"Check You Internet Connection and Restart App",Toast.LENGTH_LONG).show()
-        this.finish()
+        Log.d("sam",error.toString())
+//        Toast.makeText(this,"Check You Internet Connection and Restart App",Toast.LENGTH_LONG).show()
+//        this.finish()
     }
 
     public fun getData(): TaskResponse {
-        return this.response!!
+        if(this.response !=null)
+            return this.response!!
+        else return TaskResponse()
     }
 
     public fun getMenuData(position: Int): List<MenuData>? {
@@ -116,10 +129,15 @@ class HomeActivity : TaskBaseActivity() {
         }
     }
 
-    override fun onDetachedFromWindow() {
-        super.onDetachedFromWindow()
-        myCompositeDisposable?.clear()
-    }
+//    override fun onDetachedFromWindow() {
+//        super.onDetachedFromWindow()
+//        myCompositeDisposable?.clear()
+//    }
+
+//    override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
+////        outState.putSerializable("images",this.response!!.discountImages)
+//        super.onSaveInstanceState(outState, outPersistentState)
+//    }
 
     override fun onDestroy() {
         super.onDestroy()
