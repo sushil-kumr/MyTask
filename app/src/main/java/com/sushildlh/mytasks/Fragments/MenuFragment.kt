@@ -34,7 +34,6 @@ data class MenuState(@PersistState val menList: TaskResponse? = TaskResponse()) 
 class MenuViewModel(state: MenuState) : MavericksViewModel<MenuState>(state) {
 
     fun setList(menList: TaskResponse) = setState { copy(menList = menList) }
-//    fun addCount(count: Int)= setState { copy(menList - ) }
 }
 
 class MenuFragment : Fragment(), MavericksView {
@@ -99,9 +98,8 @@ class MenuFragment : Fragment(), MavericksView {
         mList?.adapter = this.context?.let { MenuAdapter(menuList, it) }
     }
 
-    fun setCount(count:Int) {
-//        viewModel.setList()
-//        Toast.makeText(this.context,"Hi", Toast.LENGTH_LONG).show()
+    fun show() {
+//        Toast.makeText(this.context,"Check You Internet Connection and Restart App", Toast.LENGTH_LONG).show()
     }
 
     companion object {

@@ -12,17 +12,13 @@ class TabPagerAdapter(
     private val lifecycle: Lifecycle
 ) :
     FragmentStateAdapter(fragmentManager, lifecycle) {
-    private var fragment=MenuFragment()
-
     override fun createFragment(position: Int): Fragment {
+        var fragment:Fragment?  = MenuFragment()
         var arg: Bundle = Bundle()
         arg.putInt("position", position)
         fragment?.arguments = arg
-        return fragment!!
-    }
 
-    public fun getFragment():MenuFragment{
-        return this.fragment
+        return fragment!!
     }
 
     override fun getItemCount(): Int {
